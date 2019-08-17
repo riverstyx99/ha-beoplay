@@ -94,7 +94,10 @@ class BeoPlay(object):
             for elements in r:
                 i = 0
                 while i < len(r[elements]):
-                    self.sources.append(r[elements][i][1]["friendlyName"])
+                    if r[elements][i][1]["borrowed"] == True:
+                        self.sources.append('\U0001F517' + r[elements][i][1]["friendlyName"])
+                    else:
+                        self.sources.append(r[elements][i][1]["friendlyName"])
                     self.sourcesID.append(r[elements][i][0])
                     i += 1
 
