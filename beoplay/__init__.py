@@ -95,7 +95,10 @@ class BeoPlay(object):
                 i = 0
                 while i < len(r[elements]):
                     if r[elements][i][1]["borrowed"] == True:
-                        self.sources.append('\U0001F517' + r[elements][i][1]["friendlyName"])
+                        if "friendlyName" in r[elements][i][1]["product"]:
+                            self.sources.append('\U0001F517' + r[elements][i][1]["friendlyName"] + ' (' + r[elements][i][1]["product"]["friendlyName"] + ')')
+                        else:
+                            self.sources.append('\U0001F517' + r[elements][i][1]["friendlyName"])
                     else:
                         self.sources.append(r[elements][i][1]["friendlyName"])
                     self.sourcesID.append(r[elements][i][0])
