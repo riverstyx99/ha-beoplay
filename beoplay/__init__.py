@@ -8,8 +8,9 @@ TIMEOUT = 5.0
 CONNFAILCOUNT = 5
 
 class BeoPlay(object):
-    def __init__(self, host):
+    def __init__(self, host, type='default'):
         self._host = host
+        self._type = type
         self._host_notifications = BASE_URL.format(self._host, 'BeoNotify/Notifications')
         self._name = None
         self._connfail = 0
@@ -159,12 +160,24 @@ class BeoPlay(object):
         self._postReq('POST','BeoZone/Zone/Stream/Stop/Release','')
 
     def Next(self):
-        self._postReq('POST','BeoZone/Zone/Stream/Forward','')
-        self._postReq('POST','BeoZone/Zone/Stream/Forward/Release','')
+        if self._type == 'legacy':
+            self._postReq('POST','BeoOneWay/Input', {"command":"STEP_UP","timestamp":0})
+            self._postReq('POST','BeoZone/Zone/Sound/Volume/Speaker/ContinuousLevelAction', {"continuousLevelAction":"none"})
+            self._postReq('POST','BeoZone/Zone/List/StepUp/Release', {"toBeReleased":False})
+            self._postReq('POST','/BeoZone/Zone/List/StepDown/Release', {"toBeReleased":False})
+        else:
+            self._postReq('POST','BeoZone/Zone/Stream/Forward','')
+            self._postReq('POST','BeoZone/Zone/Stream/Forward/Release','')
 
     def Prev(self):
-        self._postReq('POST','BeoZone/Zone/Stream/Backward','')
-        self._postReq('POST','BeoZone/Zone/Stream/Backward/Release','')
+        if self._type == 'legacy':
+            self._postReq('POST','BeoOneWay/Input', {"command":"STEP_DOWN","timestamp":0})
+            self._postReq('POST','BeoZone/Zone/Sound/Volume/Speaker/ContinuousLevelAction', {"continuousLevelAction":"none"})
+            self._postReq('POST','BeoZone/Zone/List/StepUp/Release', {"toBeReleased":False})
+            self._postReq('POST','BeoZone/Zone/List/StepDown/Release', {"toBeReleased":False})
+        else:
+            self._postReq('POST','BeoZone/Zone/Stream/Backward','')
+            self._postReq('POST','BeoZone/Zone/Stream/Backward/Release','')
 
     def Standby(self):
         self._postReq('PUT','BeoDevice/powerManagement/standby', {"standby":{"powerState":"standby"}})
